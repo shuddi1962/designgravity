@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
 
 export default function DashboardLayout({
@@ -78,6 +79,7 @@ function DashboardHeader() {
 }
 
 function DashboardSidebar() {
+  const pathname = usePathname();
   const menuItems = [
     { href: '/dashboard', icon: 'home', label: 'Dashboard' },
     { href: '/templates', icon: 'layout', label: 'Templates' },
@@ -105,21 +107,35 @@ function DashboardSidebar() {
   };
 
   return (
-    <aside className="w-56 border-r border-[#2A2A3E] bg-[#141420] p-4">
+    <aside className="w-56 border-r border-[#2A2A3E] bg-[#141420] p-4 flex flex-col">
       <nav className="space-y-1">
-        {menuItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-[#9090A8] hover:text-[#F8F8FC] hover:bg-[#0A0A0F] transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {icons[item.icon]}
-            </svg>
-            <span className="text-sm font-medium">{item.label}</span>
-          </Link>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                isActive
+                  ? 'bg-[#7C3AED]/15 text-[#7C3AED] border-l-2 border-[#7C3AED]'
+                  : 'text-[#9090A8] hover:text-[#F8F8FC] hover:bg-[#1E1E2E]'
+              }`}
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {icons[item.icon]}
+              </svg>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
+      
+      <div className="pt-4 mt-4 border-t border-[#2A2A3E]">
+        <div className="px-3 py-2 text-xs text-[#9090A8]">
+          <p>DesignGravity v1.0</p>
+          <p className="mt-1">© 2026 All rights reserved</p>
+        </div>
+      </div>
     </aside>
   );
 }

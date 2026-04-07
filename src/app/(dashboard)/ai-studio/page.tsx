@@ -96,25 +96,25 @@ export default function AIStudioPage() {
         <p className="text-[#9090A8]">Create stunning images and content with artificial intelligence</p>
       </header>
 
-      <div className="flex gap-8">
-        <div className="flex-1">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1 min-w-0">
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setActiveTab('generate')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
                 activeTab === 'generate'
-                  ? 'bg-[#7C3AED] text-white'
-                  : 'bg-[#141420] text-[#9090A8] hover:text-[#F8F8FC]'
+                  ? 'bg-[#7C3AED] text-white shadow-lg shadow-[#7C3AED]/25'
+                  : 'bg-[#141420] text-[#9090A8] hover:text-[#F8F8FC] hover:bg-[#1E1E2E] border border-[#2A2A3E]'
               }`}
             >
               Generate
             </button>
             <button
               onClick={() => setActiveTab('tools')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
                 activeTab === 'tools'
-                  ? 'bg-[#7C3AED] text-white'
-                  : 'bg-[#141420] text-[#9090A8] hover:text-[#F8F8FC]'
+                  ? 'bg-[#7C3AED] text-white shadow-lg shadow-[#7C3AED]/25'
+                  : 'bg-[#141420] text-[#9090A8] hover:text-[#F8F8FC] hover:bg-[#1E1E2E] border border-[#2A2A3E]'
               }`}
             >
               AI Tools
@@ -208,7 +208,7 @@ export default function AIStudioPage() {
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating || !prompt.trim()}
-                className="w-full py-3 bg-[#7C3AED] hover:bg-[#6D28D9] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-[#7C3AED] hover:bg-[#6D28D9] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-all hover:shadow-lg hover:shadow-[#7C3AED]/25 flex items-center justify-center gap-2"
               >
                 {isGenerating ? (
                   <>
@@ -231,14 +231,14 @@ export default function AIStudioPage() {
           )}
 
           {activeTab === 'tools' && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {AI_TOOLS.map((tool) => (
                 <button
                   key={tool.id}
-                  className="p-6 bg-[#141420] rounded-xl border border-[#2A2A3E] hover:border-[#7C3AED] transition-colors text-left"
+                  className="p-5 bg-[#141420] rounded-xl border border-[#2A2A3E] hover:border-[#7C3AED] hover:bg-[#1E1E2E] transition-all text-left group"
                 >
-                  <span className="text-3xl mb-3 block">{tool.icon}</span>
-                  <h3 className="font-semibold text-[#F8F8FC] mb-1">{tool.name}</h3>
+                  <span className="text-3xl mb-3 block group-hover:scale-110 transition-transform">{tool.icon}</span>
+                  <h3 className="font-semibold text-[#F8F8FC] mb-1 group-hover:text-[#7C3AED] transition-colors">{tool.name}</h3>
                   <p className="text-sm text-[#9090A8]">{tool.description}</p>
                 </button>
               ))}
