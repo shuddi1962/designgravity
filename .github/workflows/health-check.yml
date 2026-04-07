@@ -1,0 +1,14 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check app health
+        run: |
+          echo "Health check would run here"
+          echo "APP_URL: ${{ secrets.APP_URL }}"
