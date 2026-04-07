@@ -1,11 +1,11 @@
-import { FabricObject, IText, Rect, Ellipse, Image, Line, Canvas, ActiveSelection, Text, Shadow as FabricShadow, Gradient } from 'fabric';
+import { FabricObject, IText, Rect, Ellipse, Image, Line, Canvas, ActiveSelection, Shadow as FabricShadow, Gradient, FabricImage } from 'fabric';
 import type { CanvasObject, Fill, Stroke, Shadow } from '@/types/project.types';
 
 export function fabricToCanvasObject(fabricObject: FabricObject): CanvasObject {
   const bounds = fabricObject.getBoundingRect();
 
   return {
-    id: fabricObject.id || crypto.randomUUID(),
+    id: (fabricObject as unknown as { id?: string }).id || crypto.randomUUID(),
     type: getObjectType(fabricObject),
     x: Math.round(fabricObject.left ?? 0),
     y: Math.round(fabricObject.top ?? 0),
@@ -56,7 +56,7 @@ function getFill(fabricObject: FabricObject): Fill | undefined {
     return fill && fill !== 'transparent' ? { type: 'solid', color: fill } : undefined;
   }
   if ('colorStops' in fill) {
-    const gradientFill = fill as Gradient;
+    const gradientFill = fill as unknown as { type: string; colorStops: { offset: number; color: string }[] };
     return {
       type: gradientFill.type === 'linear' ? 'linear-gradient' : 'radial-gradient',
       colors: gradientFill.colorStops.map((stop) => stop.color),
@@ -102,9 +102,9 @@ function getProperties(fabricObject: FabricObject): Record<string, unknown> {
     props.textAlign = textObj.textAlign;
   }
   if (fabricObject.type === 'image') {
-    const imgObj = fabricObject as Image;
+    const imgObj = fabricObject as FabricImage;
     props.src = imgObj.getSrc?.();
-    props.crossOrigin = imgObj.crossOrigin;
+    props.crossOrigin = imgObj.getCrossOrigin?.();
   }
   if (fabricObject.type === 'rect') {
     const rectObj = fabricObject as Rect;
@@ -127,7 +127,7 @@ function createTextObject(obj: CanvasObject): IText {
     fontSize: (obj.properties.fontSize as number) ?? 24,
     fontFamily: (obj.properties.fontFamily as string) ?? 'DM Sans',
     fontWeight: (obj.properties.fontWeight as string) ?? 'normal',
-    textAlign: (obj.properties.textAlign as CanvasTextAlign) ?? 'left',
+    textAlign: (obj.properties.textAlign as IText['textAlign']) ?? 'left',
     angle: obj.rotation,
     opacity: obj.opacity,
     selectable: !obj.locked,
@@ -154,7 +154,8 @@ function createShapeObject(obj: CanvasObject): Rect {
 }
 
 function createImageObject(obj: CanvasObject): Image {
-  const image = new Image(new Image(), {
+  const imgEl = new globalThis.Image();
+  const image = new FabricImage(imgEl, {
     left: obj.x,
     top: obj.y,
     angle: obj.rotation,
@@ -163,7 +164,7 @@ function createImageObject(obj: CanvasObject): Image {
     visible: obj.visible,
   });
   if (obj.properties.src) {
-    Image.fromURL(obj.properties.src as string, (img) => {
+    FabricImage.fromURL(obj.properties.src as string, {}, (img: FabricImage | null) => {
       if (img) {
         image.setElement(img.getElement());
         image.setCoords();
